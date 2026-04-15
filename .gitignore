@@ -1,0 +1,44 @@
+# ── Large data files (raw, unfiltered — too large for git) ────────────────────
+data/ontime/
+data/cached/
+
+# Legacy data folder names (pre-reorganization)
+ontime data/
+cached_filtered/
+
+# ── data/throughput/ and data/bts/ ARE committed (filtered, reasonable size) ──
+
+# ── Model artifacts (stored in S3 — download via README instructions) ─────────
+models/*.pkl
+
+# ── Secrets ───────────────────────────────────────────────────────────────────
+.env
+*.pem
+
+# ── Word temp files ───────────────────────────────────────────────────────────
+~$*.docx
+~$*.odt
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+venv/
+env/
+ENV/
+.venv/
+
+# ── IDE / OS ──────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ── Claude Code ───────────────────────────────────────────────────────────────
+.claude/
