@@ -55,10 +55,10 @@ cp .env.example .env
 
 ## Data
 
-Raw data files are not committed to this repo (too large). To reproduce the pipeline from scratch:
+`data/throughput/` and `data/bts/` are committed to this repo. Only the large raw files are excluded.
 
 ### TSA Throughput Data
-Download from [TSA's public data portal](https://www.tsa.gov/travel/passenger-volumes) — one CSV per airport, place in `data/throughput/`.
+Already included in `data/throughput/` — one CSV per airport, pre-filtered to the 20 study airports.
 
 ### BTS On-Time Performance Data
 Run the download script (scrapes BTS, ~2 hours for 2022–2025):
@@ -120,8 +120,8 @@ sudo dnf install -y python3-pip git
 pip3 install -r requirements.txt
 
 # Clone repo and configure environment
-git clone https://github.com/vivsriram/ml-project.git
-cd ml-project
+git clone https://github.com/vivsriram/ML-Project-Final.git
+cd ML-Project-Final
 cp .env.example .env   # edit with your S3 bucket name
 
 # Launch app (persists after SSH disconnect)
