@@ -35,10 +35,168 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("✈️  TSA Checkpoint Throughput Forecaster")
+# ── Governmental / TSA styling ─────────────────────────────────────────────────
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Merriweather:wght@700&display=swap');
+
+/* Global */
+html, body, [class*="css"] {
+    font-family: 'Source Sans 3', 'Arial', sans-serif;
+}
+
+/* Top accent bar */
+[data-testid="stAppViewContainer"]::before {
+    content: "";
+    display: block;
+    height: 6px;
+    background: linear-gradient(90deg, #003366 60%, #c8a400 60%);
+}
+
+/* Main background */
+[data-testid="stAppViewContainer"] {
+    background-color: #f7f7f7;
+}
+
+/* Main content area */
+[data-testid="stMainBlockContainer"] {
+    background-color: #f7f7f7;
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background-color: #003366 !important;
+    border-right: 3px solid #c8a400;
+}
+[data-testid="stSidebar"] * {
+    color: #ffffff !important;
+}
+[data-testid="stSidebar"] .stSelectbox label,
+[data-testid="stSidebar"] .stSlider label,
+[data-testid="stSidebar"] .stNumberInput label,
+[data-testid="stSidebar"] .stCheckbox label {
+    color: #dce8f5 !important;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {
+    color: #ffffff !important;
+    font-family: 'Merriweather', Georgia, serif !important;
+    font-size: 1rem !important;
+    border-bottom: 1px solid #c8a400;
+    padding-bottom: 6px;
+}
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
+    color: #dce8f5 !important;
+    font-size: 0.85rem;
+}
+
+/* Sidebar button */
+[data-testid="stSidebar"] .stButton > button {
+    background-color: #c8a400 !important;
+    color: #003366 !important;
+    font-weight: 700 !important;
+    border: none !important;
+    border-radius: 2px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.9rem;
+}
+[data-testid="stSidebar"] .stButton > button:hover {
+    background-color: #e0b800 !important;
+}
+
+/* Page headings */
+h1 {
+    font-family: 'Merriweather', Georgia, serif !important;
+    color: #003366 !important;
+    font-size: 1.7rem !important;
+    border-bottom: 3px solid #003366;
+    padding-bottom: 8px;
+}
+h2, h3 {
+    font-family: 'Merriweather', Georgia, serif !important;
+    color: #003366 !important;
+    font-size: 1.1rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-left: 4px solid #c8a400;
+    padding-left: 10px;
+    margin-top: 1.4rem;
+}
+
+/* Caption / fine print */
+[data-testid="stCaptionContainer"] p {
+    color: #555555 !important;
+    font-size: 0.82rem;
+    font-style: italic;
+}
+
+/* Metric cards */
+[data-testid="stMetric"] {
+    background: #ffffff;
+    border: 1px solid #c8d8e8;
+    border-top: 3px solid #003366;
+    border-radius: 2px;
+    padding: 12px 16px !important;
+}
+[data-testid="stMetricLabel"] {
+    color: #555 !important;
+    font-size: 0.78rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+}
+[data-testid="stMetricValue"] {
+    color: #003366 !important;
+    font-family: 'Merriweather', Georgia, serif !important;
+    font-size: 1.6rem !important;
+}
+
+/* Info box */
+[data-testid="stAlert"] {
+    background-color: #e8f0fb !important;
+    border-left: 5px solid #003366 !important;
+    border-radius: 2px !important;
+    color: #003366 !important;
+}
+
+/* Divider */
+hr {
+    border-color: #c8d8e8 !important;
+}
+</style>
+
+<div style="
+    background: #003366;
+    color: white;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+    border-bottom: 4px solid #c8a400;
+">
+  <div style="font-size: 2.2rem; line-height:1;">✈️</div>
+  <div>
+    <div style="font-family: 'Merriweather', Georgia, serif; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.02em;">
+      Transportation Security Administration
+    </div>
+    <div style="font-size: 0.8rem; letter-spacing: 0.12em; color: #c8d8e8; text-transform: uppercase; margin-top: 2px;">
+      U.S. Department of Homeland Security &nbsp;|&nbsp; Checkpoint Throughput Forecasting System
+    </div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+st.title("TSA Checkpoint Throughput Forecaster")
 st.caption(
-    "Predicts hourly passenger volume at TSA checkpoints — "
-    "designed for TSA workforce planners making staffing decisions 12+ months ahead."
+    "OFFICIAL USE — Predicts hourly passenger volume at TSA security checkpoints. "
+    "Designed for TSA workforce planners making staffing decisions 12+ months ahead."
 )
 
 # ── Load model from S3 (cached) ───────────────────────────────────────────────
@@ -180,7 +338,7 @@ fig.add_trace(go.Bar(
     x=hourly_total["hour"],
     y=hourly_total["predicted"],
     name="LightGBM Forecast",
-    marker_color="#4472C4",
+    marker_color="#003366",
     opacity=0.85,
 ))
 if show_hist and "historical_avg" in hourly_total.columns:
@@ -189,7 +347,7 @@ if show_hist and "historical_avg" in hourly_total.columns:
         y=hourly_total["historical_avg"],
         name="Historical Average",
         mode="lines+markers",
-        line=dict(color="#D84315", width=2.5, dash="dot"),
+        line=dict(color="#c8a400", width=2.5, dash="dot"),
         marker=dict(size=6),
     ))
 fig.update_layout(
@@ -220,7 +378,7 @@ peak_df   = result_df[result_df["hour"] == peak_hour].sort_values("predicted", a
 
 fig2 = px.bar(peak_df, x="predicted", y="checkpoint", orientation="h",
               labels={"predicted": "Predicted Passengers", "checkpoint": ""},
-              color_discrete_sequence=["#7B9CD9"])
+              color_discrete_sequence=["#1a4a80"])
 fig2.update_layout(height=max(300, len(cp_list) * 45), plot_bgcolor="white",
                    paper_bgcolor="white", font=dict(size=13, color="black"),
                    xaxis=dict(title_font=FONT, tickfont=TICK),
@@ -245,6 +403,7 @@ if show_hist and "historical_avg" in hourly_total.columns:
 
 st.divider()
 st.caption(
-    "Model: LightGBM  ·  Test R² = 0.85  ·  Test MAE = 124 pax/checkpoint-hour  ·  "
-    "Data: TSA throughput + BTS on-time + T-100 load factors (2022–2025)"
+    "FOR OFFICIAL USE ONLY  ·  Model: LightGBM  ·  Test R² = 0.85  ·  Test MAE = 124 pax/checkpoint-hour  ·  "
+    "Data: TSA throughput + BTS on-time + T-100 load factors (2022–2025)  ·  "
+    "U.S. Department of Homeland Security — Transportation Security Administration"
 )
