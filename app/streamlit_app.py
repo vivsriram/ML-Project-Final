@@ -77,6 +77,23 @@ html, body, [class*="css"], p, li, span, div, label, input, select {
     color: #e8eef7 !important;
     font-family: 'Source Sans 3', Arial, sans-serif !important;
 }
+[data-testid="stSidebar"] input,
+[data-testid="stSidebar"] select,
+[data-testid="stSidebar"] [data-baseweb="select"] *,
+[data-testid="stSidebar"] [data-baseweb="input"] *,
+[data-testid="stSidebar"] [role="listbox"] *,
+[data-testid="stSidebar"] [role="option"] {
+    color: #1a1a1a !important;
+    background-color: #ffffff !important;
+}
+[data-testid="stSidebar"] [data-baseweb="select"] > div {
+    background-color: #ffffff !important;
+    color: #1a1a1a !important;
+}
+[data-testid="stSidebar"] [data-baseweb="select"] svg {
+    color: #1a1a1a !important;
+    fill: #1a1a1a !important;
+}
 [data-testid="stSidebar"] h1,
 [data-testid="stSidebar"] h2,
 [data-testid="stSidebar"] h3 {
@@ -191,39 +208,50 @@ hr {
     border-color: #ccd5df !important;
     margin: 1.5rem 0 !important;
 }
+
+/* ── Sidebar dropdown / input text fix ── */
+[data-testid="stSidebar"] [data-baseweb="select"] > div,
+[data-testid="stSidebar"] [data-baseweb="select"] input,
+[data-testid="stSidebar"] [data-baseweb="input"] input {
+    background-color: #ffffff !important;
+    color: #1a1a1a !important;
+}
+[data-testid="stSidebar"] [data-baseweb="select"] span,
+[data-testid="stSidebar"] [data-baseweb="select"] [class*="valueContainer"] * {
+    color: #1a1a1a !important;
+}
+[data-testid="stSidebar"] [data-baseweb="select"] svg {
+    fill: #1a1a1a !important;
+}
 </style>
 
 <div style="
     background: #001f4d;
     color: white;
-    padding: 16px 28px;
-    display: flex;
-    align-items: center;
-    gap: 18px;
+    padding: 22px 28px 20px;
+    text-align: center;
     margin-bottom: 10px;
     border-bottom: 4px solid #9b7e00;
 ">
-  <div style="font-size: 2.4rem; line-height: 1;">✈️</div>
-  <div>
-    <div style="
-        font-family: 'Merriweather', Georgia, serif;
-        font-size: 1.2rem;
-        font-weight: 700;
-        letter-spacing: 0.03em;
-        line-height: 1.3;
-    ">
-      Checkpoint Throughput Forecaster
-    </div>
-    <div style="
-        font-family: 'Source Sans 3', Arial, sans-serif;
-        font-size: 0.75rem;
-        letter-spacing: 0.14em;
-        color: #a8bccc;
-        text-transform: uppercase;
-        margin-top: 4px;
-    ">
-      Airport Security Operations &nbsp;·&nbsp; Workforce Planning Tool
-    </div>
+  <div style="font-size: 2.6rem; line-height: 1; margin-bottom: 10px;">✈️</div>
+  <div style="
+      font-family: 'Merriweather', Georgia, serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      line-height: 1.3;
+  ">
+    Checkpoint Throughput Forecaster
+  </div>
+  <div style="
+      font-family: 'Source Sans 3', Arial, sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      color: #a8bccc;
+      text-transform: uppercase;
+      margin-top: 8px;
+  ">
+    Airport Security Operations &nbsp;·&nbsp; Workforce Planning Tool
   </div>
 </div>
 """, unsafe_allow_html=True)
