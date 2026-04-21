@@ -236,10 +236,20 @@ with st.sidebar:
     days_to_holiday = st.slider("Days to nearest holiday", 0, 30, 7)
 
     st.divider()
-    st.markdown("**Scheduled flights (optional)**")
-    departures = st.number_input("Hourly departure count (peak hour)", 0, 80, 30)
-    avg_seats  = st.number_input("Avg seats per flight", 50, 300, 155)
-    load_factor = st.slider("Avg load factor", 0.5, 1.0, 0.78)
+    use_flight_data = st.checkbox(
+        "Include scheduled flight data",
+        value=False,
+        help="Check this if you have flight schedule data for the selected airport and date. "
+             "Without it, the model relies solely on historical throughput patterns."
+    )
+    if use_flight_data:
+        departures  = st.number_input("Hourly departure count (peak hour)", 0, 80, 30)
+        avg_seats   = st.number_input("Avg seats per flight", 50, 300, 155)
+        load_factor = st.slider("Avg load factor", 0.5, 1.0, 0.78)
+    else:
+        departures  = 0
+        avg_seats   = 0
+        load_factor = 0.0
 
     run_btn = st.button("Generate Forecast", type="primary", use_container_width=True)
 
