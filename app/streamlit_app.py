@@ -223,6 +223,18 @@ hr {
 [data-testid="stSidebar"] [data-baseweb="select"] svg {
     fill: #1a1a1a !important;
 }
+/* dropdown option list */
+[data-baseweb="popover"] *,
+[data-baseweb="menu"] *,
+[role="option"] {
+    color: #1a1a1a !important;
+    background-color: #ffffff !important;
+}
+[role="option"]:hover,
+[role="option"][aria-selected="true"] {
+    background-color: #e4ecf7 !important;
+    color: #001f4d !important;
+}
 </style>
 
 <div style="
@@ -240,6 +252,7 @@ hr {
       font-weight: 700;
       letter-spacing: 0.03em;
       line-height: 1.3;
+      color: #ffffff;
   ">
     Checkpoint Throughput Forecaster
   </div>
