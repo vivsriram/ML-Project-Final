@@ -28,187 +28,222 @@ AIRPORTS = [
 
 DAY_NAMES = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
 
+OCCUPANCY_OPTIONS = {
+    "Low season — ~60% of seats filled":      0.60,
+    "Typical — ~78% of seats filled":         0.78,
+    "High season — ~88% of seats filled":     0.88,
+    "Near-full — ~95% of seats filled":       0.95,
+}
+
 # ── Page setup ────────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="TSA Throughput Forecaster",
+    page_title="Checkpoint Throughput Forecaster",
     page_icon="✈️",
     layout="wide"
 )
 
-# ── Governmental / TSA styling ─────────────────────────────────────────────────
+# ── Styling ───────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Merriweather:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap');
 
-/* Global */
-html, body, [class*="css"] {
-    font-family: 'Source Sans 3', 'Arial', sans-serif;
+/* ── Global typography ── */
+html, body, [class*="css"], p, li, span, div, label, input, select {
+    font-family: 'Source Sans 3', 'Helvetica Neue', Arial, sans-serif !important;
+    font-size: 15px;
+    color: #1a1a1a;
 }
 
-/* Top accent bar */
+/* ── App background ── */
+[data-testid="stAppViewContainer"],
+[data-testid="stMainBlockContainer"] {
+    background-color: #f4f4f1;
+}
+
+/* ── Top rule bar ── */
 [data-testid="stAppViewContainer"]::before {
     content: "";
     display: block;
-    height: 6px;
-    background: linear-gradient(90deg, #003366 60%, #c8a400 60%);
+    height: 5px;
+    background: #001f4d;
 }
 
-/* Main background */
-[data-testid="stAppViewContainer"] {
-    background-color: #f7f7f7;
-}
-
-/* Main content area */
-[data-testid="stMainBlockContainer"] {
-    background-color: #f7f7f7;
-}
-
-/* Sidebar */
+/* ── Sidebar ── */
 [data-testid="stSidebar"] {
-    background-color: #003366 !important;
-    border-right: 3px solid #c8a400;
+    background-color: #001f4d !important;
+    border-right: 4px solid #9b7e00;
 }
 [data-testid="stSidebar"] * {
-    color: #ffffff !important;
-}
-[data-testid="stSidebar"] .stSelectbox label,
-[data-testid="stSidebar"] .stSlider label,
-[data-testid="stSidebar"] .stNumberInput label,
-[data-testid="stSidebar"] .stCheckbox label {
-    color: #dce8f5 !important;
-    font-weight: 600;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    color: #e8eef7 !important;
+    font-family: 'Source Sans 3', Arial, sans-serif !important;
 }
 [data-testid="stSidebar"] h1,
 [data-testid="stSidebar"] h2,
 [data-testid="stSidebar"] h3 {
-    color: #ffffff !important;
     font-family: 'Merriweather', Georgia, serif !important;
-    font-size: 1rem !important;
-    border-bottom: 1px solid #c8a400;
-    padding-bottom: 6px;
-}
-[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
-    color: #dce8f5 !important;
-    font-size: 0.85rem;
-}
-
-/* Sidebar button */
-[data-testid="stSidebar"] .stButton > button {
-    background-color: #c8a400 !important;
-    color: #003366 !important;
+    color: #ffffff !important;
+    font-size: 0.95rem !important;
     font-weight: 700 !important;
-    border: none !important;
-    border-radius: 2px !important;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    font-size: 0.9rem;
+    border-bottom: 1px solid #9b7e00;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+}
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] .stSelectbox label,
+[data-testid="stSidebar"] .stSlider label,
+[data-testid="stSidebar"] .stNumberInput label,
+[data-testid="stSidebar"] .stCheckbox label {
+    color: #b8ccdf !important;
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.07em !important;
+}
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
+    color: #b8ccdf !important;
+    font-size: 0.82rem;
+}
+[data-testid="stSidebar"] .stButton > button {
+    background-color: #9b7e00 !important;
+    color: #ffffff !important;
+    font-family: 'Merriweather', Georgia, serif !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    border: none !important;
+    border-radius: 1px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 10px !important;
 }
 [data-testid="stSidebar"] .stButton > button:hover {
-    background-color: #e0b800 !important;
+    background-color: #b89200 !important;
 }
 
-/* Page headings */
+/* ── Main headings ── */
 h1 {
     font-family: 'Merriweather', Georgia, serif !important;
-    color: #003366 !important;
-    font-size: 1.7rem !important;
-    border-bottom: 3px solid #003366;
-    padding-bottom: 8px;
+    color: #001f4d !important;
+    font-size: 1.65rem !important;
+    font-weight: 700 !important;
+    border-bottom: 3px solid #001f4d;
+    padding-bottom: 10px;
+    margin-bottom: 4px !important;
+    letter-spacing: 0.01em;
 }
 h2, h3 {
     font-family: 'Merriweather', Georgia, serif !important;
-    color: #003366 !important;
-    font-size: 1.1rem !important;
+    color: #001f4d !important;
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    border-left: 4px solid #c8a400;
+    letter-spacing: 0.07em;
+    border-left: 4px solid #9b7e00;
     padding-left: 10px;
-    margin-top: 1.4rem;
+    margin-top: 1.6rem !important;
 }
 
-/* Caption / fine print */
+/* ── Caption ── */
 [data-testid="stCaptionContainer"] p {
     color: #555555 !important;
-    font-size: 0.82rem;
+    font-size: 0.8rem !important;
     font-style: italic;
+    font-family: 'Source Sans 3', Arial, sans-serif !important;
 }
 
-/* Metric cards */
+/* ── Metric cards ── */
 [data-testid="stMetric"] {
     background: #ffffff;
-    border: 1px solid #c8d8e8;
-    border-top: 3px solid #003366;
-    border-radius: 2px;
-    padding: 12px 16px !important;
+    border: 1px solid #ccd5df;
+    border-top: 4px solid #001f4d;
+    border-radius: 1px;
+    padding: 14px 18px !important;
 }
-[data-testid="stMetricLabel"] {
-    color: #555 !important;
-    font-size: 0.78rem !important;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    font-weight: 600;
+[data-testid="stMetricLabel"] p {
+    color: #4a5a6a !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    font-family: 'Source Sans 3', Arial, sans-serif !important;
 }
 [data-testid="stMetricValue"] {
-    color: #003366 !important;
+    color: #001f4d !important;
     font-family: 'Merriweather', Georgia, serif !important;
-    font-size: 1.6rem !important;
+    font-size: 1.7rem !important;
+    font-weight: 700 !important;
 }
 
-/* Info box */
+/* ── Alert / info box ── */
 [data-testid="stAlert"] {
-    background-color: #e8f0fb !important;
-    border-left: 5px solid #003366 !important;
-    border-radius: 2px !important;
-    color: #003366 !important;
+    background-color: #e4ecf7 !important;
+    border-left: 5px solid #001f4d !important;
+    border-radius: 1px !important;
+}
+[data-testid="stAlert"] p {
+    color: #001f4d !important;
+    font-family: 'Source Sans 3', Arial, sans-serif !important;
 }
 
-/* Divider */
+/* ── Divider ── */
 hr {
-    border-color: #c8d8e8 !important;
+    border-color: #ccd5df !important;
+    margin: 1.5rem 0 !important;
 }
 </style>
 
 <div style="
-    background: #003366;
+    background: #001f4d;
     color: white;
-    padding: 14px 24px;
+    padding: 16px 28px;
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 8px;
-    border-bottom: 4px solid #c8a400;
+    gap: 18px;
+    margin-bottom: 10px;
+    border-bottom: 4px solid #9b7e00;
 ">
-  <div style="font-size: 2.2rem; line-height:1;">✈️</div>
+  <div style="font-size: 2.4rem; line-height: 1;">✈️</div>
   <div>
-    <div style="font-family: 'Merriweather', Georgia, serif; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.02em;">
-      Transportation Security Administration
+    <div style="
+        font-family: 'Merriweather', Georgia, serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        line-height: 1.3;
+    ">
+      Checkpoint Throughput Forecaster
     </div>
-    <div style="font-size: 0.8rem; letter-spacing: 0.12em; color: #c8d8e8; text-transform: uppercase; margin-top: 2px;">
-      U.S. Department of Homeland Security &nbsp;|&nbsp; Checkpoint Throughput Forecasting System
+    <div style="
+        font-family: 'Source Sans 3', Arial, sans-serif;
+        font-size: 0.75rem;
+        letter-spacing: 0.14em;
+        color: #a8bccc;
+        text-transform: uppercase;
+        margin-top: 4px;
+    ">
+      Airport Security Operations &nbsp;·&nbsp; Workforce Planning Tool
     </div>
   </div>
 </div>
 """, unsafe_allow_html=True)
 
-st.title("TSA Checkpoint Throughput Forecaster")
+st.title("Checkpoint Throughput Forecaster")
 st.caption(
-    "OFFICIAL USE — Predicts hourly passenger volume at TSA security checkpoints. "
-    "Designed for TSA workforce planners making staffing decisions 12+ months ahead."
+    "Predicts hourly passenger volume at airport security checkpoints. "
+    "Designed for workforce planners making staffing decisions 12+ months ahead."
 )
 
 # ── Load model from S3 (cached) ───────────────────────────────────────────────
-@st.cache_resource(show_spinner="Loading model from S3…")
+@st.cache_resource(show_spinner="Loading model…")
 def load_model():
     s3 = boto3.client("s3")
     buf = io.BytesIO()
     s3.download_fileobj(S3_BUCKET, MODEL_KEY, buf)
     buf.seek(0)
-    return joblib.load(buf)   # returns dict: model, leAirport, leCheckpoint, features
+    return joblib.load(buf)
 
-@st.cache_data(show_spinner="Loading historical data from S3…")
+@st.cache_data(show_spinner="Loading historical data…")
 def load_history():
     s3 = boto3.client("s3")
     buf = io.BytesIO()
@@ -230,7 +265,7 @@ with st.sidebar:
     with col2:
         day_of_week = st.selectbox("Day of week", list(range(7)),
                                    format_func=lambda d: DAY_NAMES[d],
-                                   index=4)   # default Friday
+                                   index=4)
 
     is_holiday = st.checkbox("Federal holiday?", value=False)
     days_to_holiday = st.slider("Days to nearest holiday", 0, 30, 7)
@@ -243,9 +278,14 @@ with st.sidebar:
              "Without it, the model relies solely on historical throughput patterns."
     )
     if use_flight_data:
-        departures  = st.number_input("Hourly departure count (peak hour)", 0, 80, 30)
-        avg_seats   = st.number_input("Avg seats per flight", 50, 300, 155)
-        load_factor = st.slider("Avg load factor", 0.5, 1.0, 0.78)
+        departures = st.number_input("Hourly departure count (peak hour)", 0, 80, 30)
+        avg_seats  = st.number_input("Avg seats per flight", 50, 300, 155)
+        occupancy_label = st.selectbox(
+            "Typical flight occupancy",
+            options=list(OCCUPANCY_OPTIONS.keys()),
+            index=1,
+        )
+        load_factor = OCCUPANCY_OPTIONS[occupancy_label]
     else:
         departures  = 0
         avg_seats   = 0
@@ -264,22 +304,19 @@ except Exception as e:
     st.error(f"Could not load model from S3: {e}")
     st.stop()
 
-model       = artifact["model"]
-le_airport  = artifact["leAirport"]
+model         = artifact["model"]
+le_airport    = artifact["leAirport"]
 le_checkpoint = artifact["leCheckpoint"]
-features    = artifact["features"]
+features      = artifact["features"]
 
 # ── Build prediction rows for every hour × every checkpoint ───────────────────
-checkpoints = list(le_checkpoint.classes_)
-airport_checkpoints = [c for c in checkpoints if c.startswith(airport) or True]
-# Filter to checkpoints that belong to selected airport using history
 try:
     history = load_history()
     cp_list = sorted(history.loc[history["airportCode"] == airport, "checkpointName"].unique())
 except Exception:
-    cp_list = ["Main Checkpoint"]   # fallback
+    cp_list = ["Main Checkpoint"]
 
-hours = list(range(4, 24))   # 4 AM – 11 PM (operational window)
+hours = list(range(4, 24))
 
 rows = []
 for hour in hours:
@@ -307,23 +344,21 @@ pred_df = pd.DataFrame(rows)[features]
 preds   = model.predict(pred_df)
 
 result_df = pd.DataFrame({
-    "hour":       [r["hour"]        for r in rows],
-    "checkpoint": [cp_list[i % len(cp_list)] for i, r in enumerate(rows)],
+    "hour":       [r["hour"]                        for r in rows],
+    "checkpoint": [cp_list[i % len(cp_list)]        for i in range(len(rows))],
     "predicted":  np.maximum(preds, 0),
 })
 
 # ── Aggregate to airport-hour totals ─────────────────────────────────────────
 hourly_total = result_df.groupby("hour")["predicted"].sum().reset_index()
 
-# ── Historical average — summed across all checkpoints per hour ───────────────
+# ── Historical average ────────────────────────────────────────────────────────
 try:
     _hist_filtered = history.loc[
         (history["airportCode"] == airport) &
         (history["month"] == month) &
         (history["dayOfWeek"] == day_of_week)
     ]
-    # Step 1: sum across checkpoints for each date-hour (total airport throughput)
-    # Step 2: average across different dates → typical throughput for this slot
     hist_avg = (
         _hist_filtered
         .groupby(["date", "hour"])["totalPassengers"].sum()
@@ -337,8 +372,8 @@ try:
 except Exception:
     show_hist = False
 
-FONT = dict(size=14, color="black")
-TICK = dict(size=13, color="black")
+FONT = dict(family="Merriweather, Georgia, serif", size=13, color="#1a1a1a")
+TICK = dict(family="Source Sans 3, Arial, sans-serif", size=12, color="#333333")
 
 # ── Charts ────────────────────────────────────────────────────────────────────
 st.subheader(f"Hourly Throughput Forecast — {airport}  ·  {DAY_NAMES[day_of_week]}, {pd.Timestamp(2025,month,1).strftime('%B')}")
@@ -347,9 +382,9 @@ fig = go.Figure()
 fig.add_trace(go.Bar(
     x=hourly_total["hour"],
     y=hourly_total["predicted"],
-    name="LightGBM Forecast",
-    marker_color="#003366",
-    opacity=0.85,
+    name="Model Forecast",
+    marker_color="#001f4d",
+    opacity=0.88,
 ))
 if show_hist and "historical_avg" in hourly_total.columns:
     fig.add_trace(go.Scatter(
@@ -357,7 +392,7 @@ if show_hist and "historical_avg" in hourly_total.columns:
         y=hourly_total["historical_avg"],
         name="Historical Average",
         mode="lines+markers",
-        line=dict(color="#c8a400", width=2.5, dash="dot"),
+        line=dict(color="#9b7e00", width=2.5, dash="dot"),
         marker=dict(size=6),
     ))
 fig.update_layout(
@@ -366,19 +401,19 @@ fig.update_layout(
     legend=dict(
         orientation="h", yanchor="top", y=-0.18,
         xanchor="center", x=0.5,
-        font=dict(size=14, color="black"),
+        font=dict(family="Source Sans 3, Arial, sans-serif", size=13, color="#1a1a1a"),
         bgcolor="rgba(0,0,0,0)",
     ),
     height=450,
     plot_bgcolor="white",
-    paper_bgcolor="white",
-    font=dict(size=14, color="black"),
+    paper_bgcolor="#f4f4f1",
+    font=FONT,
     xaxis=dict(title_font=FONT, tickfont=TICK),
     yaxis=dict(title_font=FONT, tickfont=TICK),
     margin=dict(b=80),
 )
-fig.update_xaxes(tickmode="linear", dtick=1, gridcolor="#EEEEEE")
-fig.update_yaxes(gridcolor="#EEEEEE")
+fig.update_xaxes(tickmode="linear", dtick=1, gridcolor="#e0e0e0", linecolor="#cccccc")
+fig.update_yaxes(gridcolor="#e0e0e0", linecolor="#cccccc")
 st.plotly_chart(fig, use_container_width=True)
 
 # ── Per-checkpoint breakdown ──────────────────────────────────────────────────
@@ -388,20 +423,24 @@ peak_df   = result_df[result_df["hour"] == peak_hour].sort_values("predicted", a
 
 fig2 = px.bar(peak_df, x="predicted", y="checkpoint", orientation="h",
               labels={"predicted": "Predicted Passengers", "checkpoint": ""},
-              color_discrete_sequence=["#1a4a80"])
-fig2.update_layout(height=max(300, len(cp_list) * 45), plot_bgcolor="white",
-                   paper_bgcolor="white", font=dict(size=13, color="black"),
-                   xaxis=dict(title_font=FONT, tickfont=TICK),
-                   yaxis=dict(tickfont=TICK))
-fig2.update_xaxes(gridcolor="#EEEEEE")
+              color_discrete_sequence=["#1a3a6b"])
+fig2.update_layout(
+    height=max(300, len(cp_list) * 45),
+    plot_bgcolor="white",
+    paper_bgcolor="#f4f4f1",
+    font=FONT,
+    xaxis=dict(title_font=FONT, tickfont=TICK, gridcolor="#e0e0e0"),
+    yaxis=dict(tickfont=TICK),
+)
+fig2.update_xaxes(gridcolor="#e0e0e0")
 st.plotly_chart(fig2, use_container_width=True)
 
 # ── Summary metrics ───────────────────────────────────────────────────────────
 st.subheader("Summary")
 col1, col2, col3 = st.columns(3)
-col1.metric("Peak hour",              f"{peak_hour}:00")
-col2.metric("Peak predicted volume",  f"{int(hourly_total['predicted'].max()):,} pax")
-col3.metric("Total daily forecast",   f"{int(hourly_total['predicted'].sum()):,} pax")
+col1.metric("Peak hour",             f"{peak_hour}:00")
+col2.metric("Peak predicted volume", f"{int(hourly_total['predicted'].max()):,} pax")
+col3.metric("Total daily forecast",  f"{int(hourly_total['predicted'].sum()):,} pax")
 
 if show_hist and "historical_avg" in hourly_total.columns:
     hist_total = hourly_total["historical_avg"].sum()
@@ -413,7 +452,6 @@ if show_hist and "historical_avg" in hourly_total.columns:
 
 st.divider()
 st.caption(
-    "FOR OFFICIAL USE ONLY  ·  Model: LightGBM  ·  Test R² = 0.85  ·  Test MAE = 124 pax/checkpoint-hour  ·  "
-    "Data: TSA throughput + BTS on-time + T-100 load factors (2022–2025)  ·  "
-    "U.S. Department of Homeland Security — Transportation Security Administration"
+    "Model: LightGBM  ·  Test R² = 0.85  ·  Test MAE = 124 pax/checkpoint-hour  ·  "
+    "Data: TSA throughput + BTS on-time + T-100 load factors (2022–2025)"
 )
