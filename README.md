@@ -1,8 +1,8 @@
 # TSA Checkpoint Throughput Forecasting
 
-Predicts hourly passenger volume at TSA security checkpoints across 20 major U.S. airports. A LightGBM model trained on TSA throughput data (2019–2024) and BTS flight schedule data achieves R² = 0.85 and MAE = 124 passengers per checkpoint-hour on the held-out test set — a 16% improvement over a naive historical-mean baseline.
+Predicts hourly passenger volume at TSA security checkpoints across 20 major U.S. airports. A LightGBM model trained on TSA throughput data (2022–2025) and BTS flight schedule data achieves R² = 0.85 and MAE = 124 passengers per checkpoint-hour on the held-out test set — a 16% improvement over a naive historical-mean baseline.
 
-The model is deployed as a Streamlit web app on AWS EC2, live at **http://3.85.169.163:8501**.
+The model is deployed as a Streamlit web app on AWS EC2 at port 8501. **Note:** AWS Academy rotates the public IP each time the instance is stopped and restarted — check the EC2 console for the current address (see [AWS Deployment](#aws-deployment) below).
 
 **Team:** Arend Colle, Vivek Sriram, Tiffany T. Nguyen
 
@@ -18,10 +18,9 @@ The model is deployed as a Streamlit web app on AWS EC2, live at **http://3.85.1
 ├── scripts/
 │   ├── download_bts_data.py           # Downloads BTS on-time performance data (2022–2025)
 │   ├── generate_aws_diagram.py        # Generates AWS architecture diagram (PNG)
-│   └── train_throughput_model.py      # Standalone training script (legacy)
+│   └── train_throughput_model.py      # Standalone training script
 ├── models/                            # Trained model artifacts — download from S3 (see below)
 ├── visuals/                           # Generated charts and diagrams
-├── docs/                              # Project memos and proposal
 ├── data/
 │   ├── throughput/                    # TSA checkpoint throughput CSVs — committed (one per airport, ~3 MB each)
 │   ├── bts/                           # BTS schedule/load factor CSVs — committed (one per year, ~22 MB each)
@@ -87,7 +86,7 @@ Open and run `notebooks/03_modelTraining_final.ipynb` top-to-bottom. The noteboo
 - Trains the final model and evaluates on the held-out test set
 - Saves `models/lgbmModel.pkl`
 
-> **Note:** Run the notebook from the repo root (`jupyter notebook` from `/ml-project`), not from inside `notebooks/`, so relative data paths resolve correctly.
+> **Note:** Run the notebook from the repo root (`jupyter notebook` from `ML-Project-Final/`), not from inside `notebooks/`, so relative data paths resolve correctly.
 
 ### 2. Upload artifacts to S3
 ```bash
@@ -133,7 +132,7 @@ AWS Academy Learner Lab sessions time out periodically, which stops the EC2 inst
 
 1. Log into AWS Academy → EC2 → select instance → **Start**
 2. Wait ~30 seconds, then SSH in
-3. Re-run: `cd ml-project && nohup streamlit run app/streamlit_app.py --server.port 8501 &`
+3. Re-run: `cd ML-Project-Final && nohup streamlit run app/streamlit_app.py --server.port 8501 &`
 4. Verify: http://\<EC2_PUBLIC_IP\>:8501
 
 ### Credentials
