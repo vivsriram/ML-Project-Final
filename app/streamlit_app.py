@@ -237,6 +237,50 @@ hr {
     background-color: #e4ecf7 !important;
     color: #001f4d !important;
 }
+
+/* ── Date picker ── */
+[data-testid="stSidebar"] [data-baseweb="input"] {
+    background-color: #ffffff !important;
+}
+[data-testid="stSidebar"] [data-baseweb="input"] input {
+    color: #1a1a1a !important;
+    background-color: #ffffff !important;
+}
+/* hide keyboard shortcut hint */
+[data-testid="stSidebar"] [data-baseweb="input"] ~ div[role="status"],
+[data-testid="stDateInput"] div[role="status"],
+[data-testid="stDateInput"] [aria-live] {
+    display: none !important;
+}
+/* calendar popup */
+[data-baseweb="calendar"] {
+    background-color: #ffffff !important;
+    border: 1px solid #ccd5df !important;
+    border-radius: 2px !important;
+}
+[data-baseweb="calendar"] * {
+    color: #1a1a1a !important;
+    font-family: 'Source Sans 3', Arial, sans-serif !important;
+}
+[data-baseweb="calendar"] [aria-selected="true"] div {
+    background-color: #001f4d !important;
+    color: #ffffff !important;
+    border-radius: 50% !important;
+}
+[data-baseweb="calendar"] button:hover div {
+    background-color: #e4ecf7 !important;
+    border-radius: 50% !important;
+}
+[data-baseweb="calendar"] [data-baseweb="datepicker-month-header"] * {
+    color: #001f4d !important;
+    font-weight: 700 !important;
+}
+/* hide the "Use arrow keys" keyboard hint */
+[data-baseweb="calendar"] ~ p,
+[data-baseweb="datepicker"] p[aria-live],
+div[aria-live="polite"]:not([data-testid]) {
+    display: none !important;
+}
 </style>
 
 <div style="
