@@ -14,6 +14,8 @@ import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
+import holidays
+import datetime
 from sklearn.preprocessing import LabelEncoder
 
 # ── Config ────────────────────────────────────────────────────────────────────
@@ -298,18 +300,45 @@ with st.sidebar:
 
     airport = st.selectbox("Airport", AIRPORTS, index=AIRPORTS.index("ATL"))
 
-    col1, col2 = st.columns(2)
-    with col1:
-        month = st.selectbox("Month", list(range(1, 13)),
-                             format_func=lambda m: pd.Timestamp(2025, m, 1).strftime("%b"),
-                             index=5)
-    with col2:
-        day_of_week = st.selectbox("Day of week", list(range(7)),
-                                   format_func=lambda d: DAY_NAMES[d],
-                                   index=4)
+    selected_date = st.date_input(
+        "Forecast Date",
+        value=datetime.date.today() + datetime.timedelta(days=30),
+        min_value=datetime.date.today(),
+        max_value=datetime.date.today() + datetime.timedelta(days=730),
+    )
 
-    is_holiday = st.checkbox("Federal holiday?", value=False)
-    days_to_holiday = st.slider("Days to nearest holiday", 0, 30, 7)
+    month       = selected_date.month
+    day_of_week = selected_date.weekday()  # 0=Monday … 6=Sunday
+
+    # ── Federal holiday calculation ──
+    us_holidays = holidays.US(years=[selected_date.year, selected_date.year + 1])
+    is_holiday  = selected_date in us_holidays
+
+    # Find nearest holiday (past or future) and days distance
+    holiday_dates = sorted(us_holidays.keys())
+    nearest = min(holiday_dates, key=lambda d: abs((d - selected_date).days))
+    days_to_holiday = abs((nearest - selected_date).days)
+    nearest_holiday_name = us_holidays[nearest]
+
+    # Display auto-populated info
+    if is_holiday:
+        st.markdown(
+            f"<div style='background:#9b7e00;color:#fff;padding:8px 10px;border-radius:2px;"
+            f"font-size:0.82rem;margin-top:4px;'>"
+            f"📅 <strong>{selected_date.strftime('%b %d')} is {nearest_holiday_name}</strong></div>",
+            unsafe_allow_html=True
+        )
+    else:
+        direction = "before" if nearest > selected_date else "after"
+        st.markdown(
+            f"<div style='background:#1a3a6b;color:#dce8f5;padding:8px 10px;border-radius:2px;"
+            f"font-size:0.82rem;margin-top:4px;'>"
+            f"📅 <strong>{days_to_holiday} day{'s' if days_to_holiday != 1 else ''} {direction}</strong>"
+            f" &nbsp;{nearest_holiday_name} ({nearest.strftime('%b %d')})</div>",
+            unsafe_allow_html=True
+        )
+
+    st.caption(f"Month: **{selected_date.strftime('%B')}** · Day: **{DAY_NAMES[day_of_week]}**")
 
     st.divider()
     use_flight_data = st.checkbox(
